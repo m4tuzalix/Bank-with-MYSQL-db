@@ -5,6 +5,6 @@
 - Shooping system with guies for admin and customer. To add new items to the shop db admin is required.
 - Customers can buy things from shop, search phrases.. All transactions are stored in orders.
 
-System still in built, this is just a small introduction.
+System still in built, this is just a small preview of futher project :)
 
 
