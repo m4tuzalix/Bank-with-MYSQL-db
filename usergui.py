@@ -144,7 +144,9 @@ class gui2(Toplevel):
             
 
     def buy(self):
-        buy(self.nick,self.entry_name.get())
+        selection = ProductList.curselection()[0]
+        particular_id = ProductList.get(selection)
+        buy(self.nick,particular_id)
                     
             
             

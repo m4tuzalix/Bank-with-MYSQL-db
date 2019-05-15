@@ -217,22 +217,26 @@ class menu(tk.Tk):
         con = sqlite3.connect('databases\\users.db')
         cur = con.cursor()
         cur.execute("SELECT * FROM users WHERE login=?",(self.log,))
-        rows = cur.fetchall()
-        for row in rows:
-            if row[9] == "ONLINE":
-                messagebox.showinfo("Online", "Account already online")
-            else:
-                if row[8] == "No token":
-                    self.login_verify()
-                    self.screen2.destroy()
+        if cur.fetchone() is None:
+            messagebox.showerror('error','User does not exsits')
+        else:
+            cur.execute("SELECT * FROM users WHERE login=?",(self.log,))
+            rows = cur.fetchall()
+            for row in rows:
+                if row[9] == "ONLINE":
+                    messagebox.showinfo("Online", "Account already online")
                 else:
-                    self.t = token(self, self.log)
-                    self.screen2.geometry("350x300")
-                    tk.Label(self.screen2, text="").pack()
-                    tk.Label(self.screen2, text='Provide your token').pack()
-                    self.token_entry = tk.Entry(self.screen2, textvariable=self.var)
-                    self.token_entry.pack()
-                    self.login_but.configure(command=self.token_verify)       
+                    if row[8] == "No token":
+                        self.login_verify()
+                        self.screen2.destroy()
+                    else:
+                        self.t = token(self, self.log)
+                        self.screen2.geometry("350x300")
+                        tk.Label(self.screen2, text="").pack()
+                        tk.Label(self.screen2, text='Provide your token').pack()
+                        self.token_entry = tk.Entry(self.screen2, textvariable=self.var)
+                        self.token_entry.pack()
+                        self.login_but.configure(command=self.token_verify)       
     
     def token_verify(self):
         self.autho = self.var.get()
