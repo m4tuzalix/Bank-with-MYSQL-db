@@ -73,7 +73,7 @@ class logs():
 
     def log_on(self, name):
         self.name = name
-        con = sqlite3.connect('users.db')
+        con = sqlite3.connect('databases\\users.db')
         cur = con.cursor()
         cur.execute('SELECT * FROM users WHERE login=?',(self.name,))
         for row in cur.fetchall():

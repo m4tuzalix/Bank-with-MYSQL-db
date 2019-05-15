@@ -5,14 +5,14 @@ from tkinter import messagebox
 
 
 def deposit_cash(amount,login):
-    con = sqlite3.connect('users.db')
+    con = sqlite3.connect('databases\\users.db')
     cur = con.cursor()
     cur.execute("UPDATE users SET cash=cash+? WHERE login=?", (amount,login,))
     con.commit()
     con.close()
 
 def withdraw_cash(amount,login):
-    con = sqlite3.connect('users.db')
+    con = sqlite3.connect('databases\\users.db')
     cur = con.cursor()
     cur.execute("SELECT * FROM users WHERE cash<? AND login=?",(amount,login))
     con.commit()
@@ -24,7 +24,7 @@ def withdraw_cash(amount,login):
         con.close()
 
 def cash_check(login):
-    con = sqlite3.connect('users.db')
+    con = sqlite3.connect('databases\\users.db')
     cur = con.cursor()
     cur.execute("SELECT * FROM users WHERE login=?", (login,))
     rows = cur.fetchall()  # ///////// fetchal returns all rows from provided login
@@ -36,7 +36,7 @@ def cash_check(login):
 #//// Transfers
 
 def send_cash(amount,login, customer):
-    con = sqlite3.connect('users.db')
+    con = sqlite3.connect('databases\\users.db')
     cur = con.cursor()
     funds_check = cur.execute("SELECT * FROM users WHERE cash<? AND login=?",(amount,login,)) #//// checks if user has enough money. If returns True then he doesn't have
     if funds_check.fetchone():
@@ -50,7 +50,7 @@ def send_cash(amount,login, customer):
 #///// currency
 
 def open_account(login):
-    con = sqlite3.connect('users.db')
+    con = sqlite3.connect('databases\\users.db')
     cur = con.cursor()
     cur.execute("ALTER TABLE users RENAME TO tmp")
     cur.execute("CREATE TABLE users(id INTEGER PRIMARY KEY, login TEXT(15), password TEXT(15), sec_code TEXT(4), cash FLOAT, currency FLOAT, question TEXT, answer TEXT, token TEXT, status TEXT, acc_type TEXT(8))")
@@ -63,14 +63,14 @@ def open_account(login):
     
 
 def usd_deposit(amount,login):
-    con = sqlite3.connect('users.db')
+    con = sqlite3.connect('databases\\users.db')
     cur = con.cursor()
     cur.execute("UPDATE users SET currency=currency+? WHERE login=?", (amount,login,))
     con.commit()
     con.close()
 
 def withdraw_usd(amount,login):
-    con = sqlite3.connect('users.db')
+    con = sqlite3.connect('databases\\users.db')
     cur = con.cursor()
     cur.execute("SELECT * FROM users WHERE currency<? AND login=?",(amount,login))
     con.commit()
@@ -82,7 +82,7 @@ def withdraw_usd(amount,login):
         con.close()
 
 def pln_to_currency(amount, login):
-    con = sqlite3.connect('users.db')
+    con = sqlite3.connect('databases\\users.db')
     cur = con.cursor()
     cur.execute("SELECT * FROM users WHERE cash<? AND login=?",(amount,login))
     con.commit()
@@ -95,7 +95,7 @@ def pln_to_currency(amount, login):
         con.close()
 
 def currency_transfer(customer,login,amount):
-    con = sqlite3.connect('users.db')
+    con = sqlite3.connect('databases\\users.db')
     cur = con.cursor()
     cur.execute("SELECT * FROM users WHERE login=?",(customer,))
     if cur.fetchone():
@@ -118,7 +118,7 @@ def currency_transfer(customer,login,amount):
 #////// online and offline status
 
 def status(login):
-    con = sqlite3.connect('users.db')
+    con = sqlite3.connect('databases\\users.db')
     cur = con.cursor()
     cur.execute('SELECT * FROM users WHERE login=?',(login,))
     for row in cur.fetchall():
@@ -132,15 +132,26 @@ def status(login):
 #/// TOKEN OPEN
 
 def Token_open(login):
-    con = sqlite3.connect('users.db')
+    con = sqlite3.connect('databases\\users.db')
     cur = con.cursor()
     cur.execute('UPDATE users SET token=? WHERE login=?',('Activated',login,))
     con.commit()
     con.close()
 
 def Token_close(login):
-    con = sqlite3.connect('users.db')
+    con = sqlite3.connect('databases\\users.db')
     cur = con.cursor()
     cur.execute('UPDATE users SET token=? WHERE login=?',('No token',login,))
     con.commit()
     con.close()
+
+#///// Admin or customer check
+
+def Account_type(login):
+    con = sqlite3.connect('databases\\users.db')
+    cur = con.cursor()
+    cur.execute('SELECT * FROM users WHERE login=?',(login,))
+    rows = cur.fetchall()
+    con.commit()
+    con.close()
+    return rows

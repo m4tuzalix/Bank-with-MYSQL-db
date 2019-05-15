@@ -11,7 +11,9 @@ from logs import logs
 from currency_transfer import currency_trans
 from admin import admin_chat
 from hazard import roulete, lotto, lotto_los
-from money import deposit_cash, withdraw_cash, cash_check, status, Token_open, Token_close
+from money import deposit_cash, withdraw_cash, cash_check, status, Token_open, Token_close, Account_type
+from gui import gui
+from usergui import gui2
 
 
 
@@ -77,14 +79,27 @@ class bank(tk.Tk):
         Sub5 = tk.Menu(menu)
         menu.add_cascade(label="Lotto", menu=Sub5)
         Sub5.add_command(label="Play lotto", command=lambda: lotto_los(self, self.name)) #////// lotto game
+
+        Sub6 = tk.Menu(menu)
+        menu.add_cascade(label="shop", menu=Sub6)
+        Sub6.add_command(label="Play lotto", command=self.Go_to_shop)
     
+    
+    def Go_to_shop(self):
+        for rows in Account_type(self.name):
+            if rows[10]=="ADMIN":
+                gui(self,self.name)
+            else:
+                gui2(self,self.name)
+
+
     def log_off(self):
         self.log.log_on(self.name) 
         status(self.name) #////// OFFLINE status
         self.destroy()
         
     def currency_check(self):
-        con = sqlite3.connect('users.db')
+        con = sqlite3.connect('databases\\users.db')
         cur = con.cursor()
         cur.execute("SELECT * FROM users WHERE login=?",(self.name,))
         rows = cur.fetchall()
@@ -103,7 +118,7 @@ class bank(tk.Tk):
         pass
 
     def token_check(self):
-        con = sqlite3.connect('users.db')
+        con = sqlite3.connect('databases\\users.db')
         cur = con.cursor()
         cur.execute("SELECT * FROM users WHERE login=?",(self.name,))
         rows = cur.fetchall()
@@ -134,7 +149,7 @@ class bank(tk.Tk):
 
 
     def currency(self):
-        con = sqlite3.connect('users.db')
+        con = sqlite3.connect('databases\\users.db')
         cur = con.cursor()
         cur.execute("SELECT * FROM users WHERE login=?",(self.name,))
         rows = cur.fetchall()

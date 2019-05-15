@@ -16,12 +16,10 @@ import sqlite3
 
 class menu(tk.Tk):
     
-    if os.path.isdir('admin') is False:
-        os.mkdir('admin')
+    if os.path.isdir('databases') is False:
+        os.mkdir('databases')
     elif os.path.isdir('logs') is False:
         os.mkdir('logs')
-    elif os.path.isdir('bank_account') is False:
-        os.mkdir('bank_account')
     else:
         pass
 
@@ -216,7 +214,7 @@ class menu(tk.Tk):
         self.log = self.username2.get()
         self.var = tk.StringVar()
        
-        con = sqlite3.connect('users.db')
+        con = sqlite3.connect('databases\\users.db')
         cur = con.cursor()
         cur.execute("SELECT * FROM users WHERE login=?",(self.log,))
         rows = cur.fetchall()
@@ -241,7 +239,7 @@ class menu(tk.Tk):
         if not self.token_entry:
             messagebox.showerror('error', 'empty gap')
         else:
-            con = sqlite3.connect('users.db')
+            con = sqlite3.connect('databases\\users.db')
             cur = con.cursor()
             cur.execute('SELECT * FROM users WHERE login=?',(self.log,))
             for row in cur.fetchall():
