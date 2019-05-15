@@ -1,4 +1,10 @@
-# Bank-with-MYSQL-db - IN PROGRESS
-# Test version with 70% things working. Will be updating frequently
-Refreshed bank project with sqlite3 database instead of txt. Optymalized code with little improvments.
-It is the part of BIGER  shoop and web-shop project which I will release soon :)
+# Bank-with-MYSQL-db and shop system - IN PROGRESS
+
+
+- Previous project with improved code, implemented databse in sqlite3
+- Shooping system with guies for admin and customer. To add new items to the shop db admin is required.
+- Customers can buy things from shop, search phrases.. All transactions are stored in orders.
+
+System still in built, this is just a small introduction.
+
+
