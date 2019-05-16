@@ -47,15 +47,15 @@ class gui(Toplevel):
         self.entry_name = Entry(DataLeft, textvariable=self.prodName, width=39)
         self.entry_name.grid(row=1, column=1)
 
-        self.productPrice = Label(DataLeft, text='Product owner')
-        self.productPrice.grid(row=2, column=0, sticky=W)
-        self.entry_price = Entry(DataLeft, textvariable=self.prodPrice, width=39)
-        self.entry_price.grid(row=2, column=1)
-
-        self.productOwner = Label(DataLeft, text='Product price')
-        self.productOwner.grid(row=3, column=0, sticky=W)
+        self.productOwner = Label(DataLeft, text='Product owner')
+        self.productOwner.grid(row=2, column=0, sticky=W)
         self.entry_Owner = Entry(DataLeft, textvariable=self.prodOwner, width=39)
-        self.entry_Owner.grid(row=3, column=1)
+        self.entry_Owner.grid(row=2, column=1)
+        
+        self.productPrice = Label(DataLeft, text='Product price')
+        self.productPrice.grid(row=3, column=0, sticky=W)
+        self.entry_price = Entry(DataLeft, textvariable=self.prodPrice, width=39)
+        self.entry_price.grid(row=3, column=1)
 
         self.productDescription = Label(DataLeft, text='Product description')
         self.productDescription.grid(row=4, column=0, sticky=W)
@@ -109,7 +109,7 @@ class gui(Toplevel):
     
     def AddProducts(self):
     
-        database.AddProducts(self.prodName.get(), self.prodOwner.get(),  self.prodPrice.get(), self.prodDescription.get())
+        database.AddProducts(self.entry_name.get(), self.entry_Owner.get(),  self.entry_price.get(), self.entry_Description.get())
         ProductList.delete(0,END)
         ProductList.insert(END,(self.prodName.get(), self.prodOwner.get(),  self.prodPrice.get(), self.prodDescription.get()))
         self.Show_product()

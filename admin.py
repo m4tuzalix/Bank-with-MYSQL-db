@@ -2,7 +2,8 @@ import tkinter as tk
 import os
 from tkinter import messagebox
 from logs import logs
-
+from gui import gui
+from money import status
 
 
 class admins(tk.Tk):
@@ -12,13 +13,8 @@ class admins(tk.Tk):
         self.password = password
         self.code = code
         self.path_logs = "logs\\"
+        status(self.login)
         tk.Tk.__init__(self)
-        with open(self.path_admin+self.login, "r") as file:
-            lines = file.readlines()
-        with open(self.path_admin+self.login, "w") as file2:
-            lines[3] = 'ONLINE'
-            for x in lines:
-                file2.write(x)
         tk.Tk.protocol(self,'WM_DELETE_WINDOW', self.offline_switch)
         tk.Tk.geometry(self,"400x400")
         tk.Tk.title(self, "Admin menu")
@@ -41,15 +37,12 @@ class admins(tk.Tk):
         self.info4 = tk.Entry(self, bg="yellow")
         self.info4.pack()
         tk.Button(self, text='proceed', command=self.unban).pack()
+        tk.Label(self, text="").pack()
+        tk.Button(self, text='shop', command=lambda: gui(self,self.login)).pack()
     
     def offline_switch(self):
-        with open(self.path_admin+self.login, "r") as file:
-            lines = file.readlines()
-        with open(self.path_admin+self.login, "w") as file2:
-            lines[3] = 'OFFLINE'
-            for x in lines:
-                file2.write(x)
-            self.destroy()
+        status(self.login)
+        self.destroy()
     
     def get_user(self):
         self.check = self.info.get()
