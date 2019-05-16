@@ -1,18 +1,19 @@
 import sqlite3
 from tkinter import messagebox
+import random
 
 #/// Custom currency
 
 
 def deposit_cash(amount,login):
-    con = sqlite3.connect('databases\\users.db')
+    con = sqlite3.connect('databases\\main.db')
     cur = con.cursor()
     cur.execute("UPDATE users SET cash=cash+? WHERE login=?", (amount,login,))
     con.commit()
     con.close()
 
 def withdraw_cash(amount,login):
-    con = sqlite3.connect('databases\\users.db')
+    con = sqlite3.connect('databases\\main.db')
     cur = con.cursor()
     cur.execute("SELECT * FROM users WHERE cash<? AND login=?",(amount,login))
     con.commit()
@@ -24,7 +25,7 @@ def withdraw_cash(amount,login):
         con.close()
 
 def cash_check(login):
-    con = sqlite3.connect('databases\\users.db')
+    con = sqlite3.connect('databases\\main.db')
     cur = con.cursor()
     cur.execute("SELECT * FROM users WHERE login=?", (login,))
     rows = cur.fetchall()  # ///////// fetchal returns all rows from provided login
@@ -33,10 +34,20 @@ def cash_check(login):
     con.commit()
     con.close()
 
+def cur_check(login):
+    con = sqlite3.connect('databases\\main.db')
+    cur = con.cursor()
+    cur.execute("SELECT * FROM users WHERE login=?", (login,))
+    rows = cur.fetchall()  # ///////// fetchal returns all rows from provided login
+    for row in rows: #//// checking all rows in login provided
+        messagebox.showinfo('info','Your balance: '+str(row[5]))  #/// printing row[4] which is cash 
+    con.commit()
+    con.close()
+
 #//// Transfers
 
 def send_cash(amount,login, customer):
-    con = sqlite3.connect('databases\\users.db')
+    con = sqlite3.connect('databases\\main.db')
     cur = con.cursor()
     funds_check = cur.execute("SELECT * FROM users WHERE cash<? AND login=?",(amount,login,)) #//// checks if user has enough money. If returns True then he doesn't have
     if funds_check.fetchone():
@@ -50,7 +61,7 @@ def send_cash(amount,login, customer):
 #///// currency
 
 def open_account(login):
-    con = sqlite3.connect('databases\\users.db')
+    con = sqlite3.connect('databases\\main.db')
     cur = con.cursor()
     cur.execute("ALTER TABLE users RENAME TO tmp")
     cur.execute("CREATE TABLE users(id INTEGER PRIMARY KEY, login TEXT(15), password TEXT(15), sec_code TEXT(4), cash FLOAT, currency FLOAT, question TEXT, answer TEXT, token TEXT, status TEXT, acc_type TEXT(8))")
@@ -63,14 +74,14 @@ def open_account(login):
     
 
 def usd_deposit(amount,login):
-    con = sqlite3.connect('databases\\users.db')
+    con = sqlite3.connect('databases\\main.db')
     cur = con.cursor()
     cur.execute("UPDATE users SET currency=currency+? WHERE login=?", (amount,login,))
     con.commit()
     con.close()
 
 def withdraw_usd(amount,login):
-    con = sqlite3.connect('databases\\users.db')
+    con = sqlite3.connect('databases\\main.db')
     cur = con.cursor()
     cur.execute("SELECT * FROM users WHERE currency<? AND login=?",(amount,login))
     con.commit()
@@ -82,7 +93,7 @@ def withdraw_usd(amount,login):
         con.close()
 
 def pln_to_currency(amount, login):
-    con = sqlite3.connect('databases\\users.db')
+    con = sqlite3.connect('databases\\main.db')
     cur = con.cursor()
     cur.execute("SELECT * FROM users WHERE cash<? AND login=?",(amount,login))
     con.commit()
@@ -95,7 +106,7 @@ def pln_to_currency(amount, login):
         con.close()
 
 def currency_transfer(customer,login,amount):
-    con = sqlite3.connect('databases\\users.db')
+    con = sqlite3.connect('databases\\main.db')
     cur = con.cursor()
     cur.execute("SELECT * FROM users WHERE login=?",(customer,))
     if cur.fetchone():
@@ -118,7 +129,7 @@ def currency_transfer(customer,login,amount):
 #////// online and offline status
 
 def status(login):
-    con = sqlite3.connect('databases\\users.db')
+    con = sqlite3.connect('databases\\main.db')
     cur = con.cursor()
     cur.execute('SELECT * FROM users WHERE login=?',(login,))
     for row in cur.fetchall():
@@ -132,14 +143,14 @@ def status(login):
 #/// TOKEN OPEN
 
 def Token_open(login):
-    con = sqlite3.connect('databases\\users.db')
+    con = sqlite3.connect('databases\\main.db')
     cur = con.cursor()
     cur.execute('UPDATE users SET token=? WHERE login=?',('Activated',login,))
     con.commit()
     con.close()
 
 def Token_close(login):
-    con = sqlite3.connect('databases\\users.db')
+    con = sqlite3.connect('databases\\main.db')
     cur = con.cursor()
     cur.execute('UPDATE users SET token=? WHERE login=?',('No token',login,))
     con.commit()
@@ -148,10 +159,71 @@ def Token_close(login):
 #///// Admin or customer check
 
 def Account_type(login):
-    con = sqlite3.connect('databases\\users.db')
+    con = sqlite3.connect('databases\\main.db')
     cur = con.cursor()
     cur.execute('SELECT * FROM users WHERE login=?',(login,))
     rows = cur.fetchall()
     con.commit()
     con.close()
     return rows
+
+#///// hazard
+def fiftyy(login,bet):
+    number = random.randint(1,2)
+    print(number)
+    con = sqlite3.connect('databases\\main.db')
+    cur = con.cursor()
+    cur.execute("SELECT * FROM users WHERE login=?",(login,))
+    if cur.fetchone():
+        cur.execute("SELECT * FROM users WHERE cash<? AND login=?",(bet,login,))
+        if cur.fetchone():
+            messagebox.showerror('error', 'Insufficient funds')
+        else:
+            if number is 1:
+                cur.execute('UPDATE users SET cash=cash+? WHERE login=?',(bet/5,login))
+                messagebox.showinfo('great','You won: '+str(round(bet/5)))
+            else:
+                cur.execute('UPDATE users SET cash=cash-? WHERE login=?',(bet,login))
+                messagebox.showinfo('loose', "you lost")
+    con.commit()
+    con.close()
+
+def thirtyy(login,bet):
+    number = random.randint(1,6)
+    print(number)
+    con = sqlite3.connect('databases\\main.db')
+    cur = con.cursor()
+    cur.execute("SELECT * FROM users WHERE login=?",(login,))
+    if cur.fetchone():
+        cur.execute("SELECT * FROM users WHERE cash<? AND login=?",(bet,login,))
+        if cur.fetchone():
+            messagebox.showerror('error', 'Insufficient funds')
+        else:
+            if number is 1:
+                cur.execute('UPDATE users SET cash=cash+? WHERE login=?',(bet/2,login))
+                messagebox.showinfo('great','You won: '+str(round(bet/2)))
+            else:
+                cur.execute('UPDATE users SET cash=cash-? WHERE login=?',(bet,login))
+                messagebox.showinfo('loose', "you lost")
+    con.commit()
+    con.close()
+
+def tenn(login,bet):
+    number = random.randint(1,10)
+    print(number)
+    con = sqlite3.connect('databases\\main.db')
+    cur = con.cursor()
+    cur.execute("SELECT * FROM users WHERE login=?",(login,))
+    if cur.fetchone():
+        cur.execute("SELECT * FROM users WHERE cash<? AND login=?",(bet,login,))
+        if cur.fetchone():
+            messagebox.showerror('error', 'Insufficient funds')
+        else:
+            if number is 1:
+                cur.execute('UPDATE users SET cash=cash+? WHERE login=?',(bet,login))
+                messagebox.showinfo('great','You won: '+str(round(bet)))
+            else:
+                cur.execute('UPDATE users SET cash=cash-? WHERE login=?',(bet,login))
+                messagebox.showinfo('loose', "you lost")
+    con.commit()
+    con.close()

@@ -12,13 +12,12 @@ from credentials import back
 import users
 import sqlite3
 
-
+if os.path.isdir('databases') is False:
+        os.mkdir('databases')
 
 class menu(tk.Tk):
     
-    if os.path.isdir('databases') is False:
-        os.mkdir('databases')
-    elif os.path.isdir('logs') is False:
+    if os.path.isdir('logs') is False:
         os.mkdir('logs')
     else:
         pass
@@ -27,7 +26,6 @@ class menu(tk.Tk):
         tk.Tk.__init__(self)
         self.logi = logs()
         self.path_logs = "logs\\"
-        self.path_admin = "admin\\"
         tk.Tk.configure(self, bg="red")
         tk.Tk.geometry(self, "300x250")
         tk.Tk.title(self, "Smiglo Bank")
@@ -147,20 +145,9 @@ class menu(tk.Tk):
         self.username_entry2.delete(0, tk.END)
         self.password_entry2.delete(0, tk.END)
         self.security_code_entry.delete(0, tk.END)
-        
-        
+    
         users.verification(self.login_details, self.password_details, self.security_code_details)
-        list_of_admins = os.listdir(self.path_admin)
         
-        if self.login_details in list_of_admins:
-            file2 = open(self.path_admin+self.login_details, "r")
-            lines = file2.readlines()
-            if lines[1] == self.password_details+"\n" and lines[2] == self.security_code_details+'\n':
-                admins(self.login_details, self.password_details, self.security_code_details)
-            else:
-                messagebox.showerror('error', 'Not this time')
-        
-
     #login window
 
     def login(self):
@@ -210,11 +197,10 @@ class menu(tk.Tk):
     def token_check(self):
         global var
         global log 
-        list_of_admins = os.listdir(self.path_admin)
         self.log = self.username2.get()
         self.var = tk.StringVar()
        
-        con = sqlite3.connect('databases\\users.db')
+        con = sqlite3.connect('databases\\main.db')
         cur = con.cursor()
         cur.execute("SELECT * FROM users WHERE login=?",(self.log,))
         if cur.fetchone() is None:
@@ -243,7 +229,7 @@ class menu(tk.Tk):
         if not self.token_entry:
             messagebox.showerror('error', 'empty gap')
         else:
-            con = sqlite3.connect('databases\\users.db')
+            con = sqlite3.connect('databases\\main.db')
             cur = con.cursor()
             cur.execute('SELECT * FROM users WHERE login=?',(self.log,))
             for row in cur.fetchall():

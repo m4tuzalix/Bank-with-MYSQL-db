@@ -2,7 +2,6 @@ from tkinter import *
 from tkinter import messagebox
 import database
 from collections import OrderedDict
-from PIL import ImageTk, Image
 from orders import buy
 
 

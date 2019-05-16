@@ -5,7 +5,7 @@ from random import shuffle
 import math
 import time
 from admin import bank_acc
-
+from money import fiftyy,thirtyy,tenn
 
 class roulete(tk.Toplevel):
     def __init__(self, master, login):
@@ -41,8 +41,6 @@ class change():
 class fifty(tk.Tk):
     def __init__(self, parent, login):
         self.login = login
-        self.path_customers = "customers\\"
-        self.path_bank = 'bank_account\\bank'
         self.t = change()
         self.parent = parent
         self.bet = tk.StringVar()
@@ -55,32 +53,13 @@ class fifty(tk.Tk):
         tk.Button(self, text="change mode", command=lambda: self.t.change_window(self.parent, self)).pack(side=tk.BOTTOM)
 
     def check(self):
-        self.number = random.randint(1,2)
         self.bet_score = float(self.entry.get())
-        with open(self.path_customers+self.login, "r") as file:
-            lines = file.readlines()
-            if float(lines[3]) < self.bet_score:
-                messagebox.showerror('error', 'no funds')
-            else:
-                if self.number == 1:
-                    with open(self.path_customers+self.login, "w") as file2:
-                        for x in lines:
-                            file2.write(x)
-                        messagebox.showinfo('great','You won: '+str(round(self.bet_score/5)))
-                else:
-                    with open(self.path_customers+self.login, "w") as file2:
-                        lines[3]=str(float(lines[3])-self.bet_score)+'\n'
-                        for x in lines:
-                            file2.write(x)
-                        messagebox.showinfo('loose', "you lost")
-                bank_acc(self.path_bank,self.bet_score)
+        fiftyy(self.login,self.bet_score)
 
 
 class thirty(tk.Tk):
     def __init__(self, parent, login):
         self.login = login
-        self.path_customers = "customers\\"
-        self.path_bank = 'bank_account\\bank'
         self.t = change()
         self.parent = parent
         self.bet = tk.StringVar()
@@ -93,34 +72,15 @@ class thirty(tk.Tk):
         tk.Button(self, text="change mode", command=lambda: self.t.change_window(self.parent, self)).pack(side=tk.BOTTOM)
 
     def check(self):
-        self.number = random.randint(1,5)
         self.bet_score = float(self.entry.get())
-        with open(self.path_customers+self.login, "r") as file:
-            lines = file.readlines()
-            if float(lines[3]) < self.bet_score:
-                messagebox.showerror('error', 'no funds')
-            else:
-                if self.number == 1:
-                    with open(self.path_customers+self.login, "w") as file2:
-                        lines[3]=str(float(lines[3])+round(self.bet_score/2))+'\n'
-                        for x in lines:
-                            file2.write(x)
-                        messagebox.showinfo('great','You won: '+str(round(self.bet_score/2)))
-                else:
-                    with open(self.path_customers+self.login, "w") as file2:
-                        lines[3]=str(float(lines[3])-self.bet_score)+'\n'
-                        for x in lines:
-                            file2.write(x)
-                        messagebox.showinfo('loose', "you lost")
-                bank_acc(self.path_bank,self.bet_score)
+        thirtyy(self.login,self.bet_score)
+                
 
 
 
 class ten(tk.Tk):
     def __init__(self, parent, login):
         self.login = login
-        self.path_customers = "customers\\"
-        self.path_bank = 'bank_account\\bank'
         self.t = change()
         self.parent = parent
         self.bet = tk.StringVar()
@@ -133,26 +93,9 @@ class ten(tk.Tk):
         tk.Button(self, text="change mode", command=lambda: self.t.change_window(self.parent, self)).pack(side=tk.BOTTOM)
 
     def check(self):
-        self.number = random.randint(1,10)
         self.bet_score = float(self.entry.get())
-        with open(self.path_customers+self.login, "r") as file:
-            lines = file.readlines()
-            if float(lines[3]) < self.bet_score:
-                messagebox.showerror('error', 'no funds')
-            else:
-                if self.number == 1:
-                    with open(self.path_customers+self.login, "w") as file2:
-                        lines[3]=str(float(lines[3])+round(self.bet_score))+'\n'
-                        for x in lines:
-                            file2.write(x)
-                        messagebox.showinfo('great','You won: '+str(round(self.bet_score)))
-                else:
-                    with open(self.path_customers+self.login, "w") as file2:
-                        lines[3]=str(float(lines[3])-self.bet_score)+'\n'
-                        for x in lines:
-                            file2.write(x)
-                        messagebox.showinfo('loose', "you lost")
-                bank_acc(self.path_bank,self.bet_score)
+        tenn(self.login,self.bet_score)
+                
 
 
 class lotto(tk.Toplevel):

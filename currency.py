@@ -5,7 +5,7 @@ from tkinter import messagebox
 from tkinter import font as tkfont
 from logs import logs
 from currency_transfer import currency_trans
-from money import open_account, withdraw_usd, usd_deposit, currency_transfer
+from money import open_account, withdraw_usd, usd_deposit, currency_transfer, cur_check
 
 class currency(tk.Toplevel):    
     def __init__(self, master, nick, balance=0):
@@ -64,9 +64,7 @@ class currency(tk.Toplevel):
             
     
     def status(self): ###### current balance of currency accoount
-        file=open(self.path_customers+self.nick, "r")
-        lines = file.readlines()
-        self.check.set("Your current balance: "+lines[4]+" USD")
+        cur_check(self.nick)
 
     def deposit_usd(self):
         self.usd = float(self.depo2_entry.get()) 

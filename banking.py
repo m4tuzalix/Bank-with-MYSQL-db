@@ -99,7 +99,7 @@ class bank(tk.Tk):
         self.destroy()
         
     def currency_check(self):
-        con = sqlite3.connect('databases\\users.db')
+        con = sqlite3.connect('databases\\main.db')
         cur = con.cursor()
         cur.execute("SELECT * FROM users WHERE login=?",(self.name,))
         rows = cur.fetchall()
@@ -118,7 +118,7 @@ class bank(tk.Tk):
         pass
 
     def token_check(self):
-        con = sqlite3.connect('databases\\users.db')
+        con = sqlite3.connect('databases\\main.db')
         cur = con.cursor()
         cur.execute("SELECT * FROM users WHERE login=?",(self.name,))
         rows = cur.fetchall()
@@ -149,7 +149,7 @@ class bank(tk.Tk):
 
 
     def currency(self):
-        con = sqlite3.connect('databases\\users.db')
+        con = sqlite3.connect('databases\\main.db')
         cur = con.cursor()
         cur.execute("SELECT * FROM users WHERE login=?",(self.name,))
         rows = cur.fetchall()

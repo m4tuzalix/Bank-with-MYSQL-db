@@ -11,9 +11,7 @@ class admins(tk.Tk):
         self.logs = logs()
         self.password = password
         self.code = code
-        self.path_customers = 'customers\\'
         self.path_logs = "logs\\"
-        self.path_admin = "admin\\"
         tk.Tk.__init__(self)
         with open(self.path_admin+self.login, "r") as file:
             lines = file.readlines()

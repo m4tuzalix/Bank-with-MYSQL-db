@@ -1,13 +1,14 @@
-import tkinter as tk 
+
 import os
+if os.path.isdir('databases') is False:
+    os.mkdir('databases')
+else:
+    pass
+
+   
 from banking_menu import menu
-from tkinter import font as tkfont
-
-
-
 
     
-
 test = menu()
 test.mainloop()
 

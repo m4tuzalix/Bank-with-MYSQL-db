@@ -9,8 +9,7 @@ from money import send_cash
 class trans(tk.Toplevel):
     def __init__(self, master, nick):
         self.nick = nick
-        self.path_customers = "C:\\Users\\Mateusz\\Desktop\\bank project\\customers\\"
-        self.path_logs = "C:\\Users\\Mateusz\\Desktop\\bank project\\logs\\"
+        self.path_logs = "logs\\"
         self.logs = logs()
         tk.Toplevel.__init__(self, master)
         tk.Tk.configure(self, bg="white")

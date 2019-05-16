@@ -14,7 +14,7 @@ class currency_trans(tk.Toplevel):
             lines=file.readlines()
         self.title("Add funds to currency")
         self.geometry("350x250")
-        con = sqlite3.connect('databases\\users.db')
+        con = sqlite3.connect('databases\\main.db')
         cur = con.cursor()
         cur.execute('SELECT * FROM users WHERE login=?',(self.name,))
         for row in cur.fetchall():
@@ -36,7 +36,7 @@ class currency_trans(tk.Toplevel):
             messagebox.showerror('error', 'cannot proceed negative amount')
         else:
             pln_to_currency(self.amount,self.name)
-            con = sqlite3.connect('databases\\users.db')
+            con = sqlite3.connect('databases\\main.db')
             cur = con.cursor()
             cur.execute('SELECT * FROM users WHERE login=?',(self.name,))
             for row in cur.fetchall(): 
