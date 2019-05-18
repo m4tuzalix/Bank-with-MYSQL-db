@@ -227,3 +227,40 @@ def tenn(login,bet):
                 messagebox.showinfo('loose', "you lost")
     con.commit()
     con.close()
+
+#///// admin stuff
+
+def admin_list(login):  #// gets user list
+    con = sqlite3.connect('databases\\main.db')
+    cur = con.cursor()
+    cur.execute('SELECT * FROM users where login=?',(login,))
+    rows = cur.fetchall()
+    con.commit()
+    con.close()
+    return rows
+
+def ban_unban(login):
+    con = sqlite3.connect('databases\\main.db')
+    cur = con.cursor()
+    cur.execute('SELECT * FROM users WHERE login=?',(login,))
+    for row in cur.fetchall():
+        if row[10] == 'BANNED':
+            cur.execute('UPDATE users SET acc_type=? WHERE login=?',('CUSTOMER',login,))
+            messagebox.showinfo('info','Banned user login: '+str(login))
+        elif row[10]=='CUSTOMER':
+            cur.execute('UPDATE users SET acc_type=? WHERE login=?',('BANNED',login,))
+            messagebox.showinfo('info','Unbaned login: '+str(login))
+    con.commit()
+    con.close()
+
+
+#//// products
+
+def product_list(name):  #// gets user list
+    con = sqlite3.connect('databases\\main.db')
+    cur = con.cursor()
+    cur.execute('SELECT * FROM products where name=?',(name,))
+    rows = cur.fetchall()
+    con.commit()
+    con.close()
+    return rows

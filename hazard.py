@@ -6,6 +6,7 @@ import math
 import time
 from admin import bank_acc
 from money import fiftyy,thirtyy,tenn
+import sqlite3
 
 class roulete(tk.Toplevel):
     def __init__(self, master, login):
@@ -107,22 +108,21 @@ class lotto(tk.Toplevel):
         tk.Toplevel.__init__(self, master)
         self.geometry('350x300')
         tk.Label(self, text="Put 6 numbers").pack()
-        self.entry1 = tk.Entry(self, bg='yellow')
-        self.entry2 = tk.Entry(self, bg='yellow')
-        self.entry3 = tk.Entry(self, bg='yellow')
-        self.entry4 = tk.Entry(self, bg='yellow')
-        self.entry5 = tk.Entry(self, bg='yellow')
-        self.entry6 = tk.Entry(self, bg='yellow')
-        self.entry1.place(x=60, y=50, width=30)
-        self.entry2.place(x=100, y=50, width=30)
-        self.entry3.place(x=140, y=50, width=30)
-        self.entry4.place(x=180, y=50, width=30)
-        self.entry5.place(x=220, y=50, width=30)
-        self.entry6.place(x=260, y=50, width=30)
-        tk.Label(self, text="").pack()
-        tk.Label(self, text="").pack()
-        tk.Label(self, text="").pack()
-        tk.Label(self, text="").pack()
+        self.entry = list(range(6))
+
+        self.frame = tk.Frame(self, bg='green', bd=2, width=300, height=40, relief=tk.RIDGE)
+        self.frame.pack(side=tk.TOP)
+        a = -1
+        b = 0 
+        for y in range(6):   #///// loop for entries to provide the numbers to roll
+            a = a+1
+            b = b+1
+            self.entry[a] = tk.Entry(self.frame, width=5,bg='yellow')
+            self.entry[a].grid(row=0, column=b)
+        
+        for x in range(4):
+            tk.Label(self, text="").pack()
+        
         self.info = tk.Label(self, text="Numbers")
         self.info.pack()
         tk.Label(self, text="").pack()
@@ -162,14 +162,15 @@ class lotto(tk.Toplevel):
         
 
     def roll_numbers(self):
+        con = sqlite3.connect('databases\\main.db')
+        cur = con.cursor()
         self.info2.config(text="No score")
         lottery = list(range(1,49))
         numbers = []
         hit = []
-        entries = [(self.entry1.get()), (self.entry2.get()), (self.entry3.get()), (self.entry4.get()), (self.entry5.get()), (self.entry6.get())]
+        entries = [(self.entry[0].get()), (self.entry[1].get()), (self.entry[2].get()), (self.entry[3].get()), (self.entry[4].get()), (self.entry[5].get())]
         double_check = set(entries)  #### set returns value without duplicates
-        file=open(self.path_customers+self.login, 'r')
-        lines=file.readlines()
+
 
         if len(double_check) != len(entries): ### if duplicates exist, double_check length is lower then the original length of the list
             messagebox.showerror('error', 'Value cannot be doubled!')
@@ -192,41 +193,29 @@ class lotto(tk.Toplevel):
         if len(hit) == 3:
             win = random.randint(1000,2000)
             messagebox.showinfo('win', 'You have guess 3 numbers, won: '+str(win))
-            with open(self.path_customers+self.login, 'w') as file:
-                lines[3]=str(float(lines[3])+float(win))+'\n'
-                for x in lines:
-                    file.write(x)
+            cur.execute('UPDATE users SET cash=cash+? WHERE login=?',(win,self.login))
         elif len(hit) == 4:
             win = random.randint(10000,20000)
             messagebox.showinfo('win', 'You have guess 4 numbers, won: '+str(win))
-            with open(self.path_customers+self.login, 'w') as file:
-                lines[3]=str(float(lines[3])+float(win))+'\n'
-                for x in lines:
-                    file.write(x)
+            cur.execute('UPDATE users SET cash=cash+? WHERE login=?',(win,self.login))
         
         elif len(hit) == 5:
             win = random.randint(100000,200000)
             messagebox.showinfo('win', 'You have guess 5 numbers, won: '+str(win))
-            with open(self.path_customers+self.login, 'w') as file:
-                lines[3]=str(float(lines[3])+float(win))+'\n'
-                for x in lines:
-                    file.write(x)
+            cur.execute('UPDATE users SET cash=cash+? WHERE login=?',(win,self.login))
 
         elif len(hit) == 6:
             win = random.randint(1000000,10000000)
             messagebox.showinfo('win', 'You have guess all numbers!!!!!, won: '+str(win))
-            with open(self.path_customers+self.login, 'w') as file:
-                lines[3]=str(float(lines[3])+float(win))+'\n'
-                for x in lines:
-                    file.write(x)
+            cur.execute('UPDATE users SET cash=cash+? WHERE login=?',(win,self.login))
+        con.commit()
+        con.close()    
         self.counter = self.counter + 1
         
     
 class lotto_los(tk.Toplevel):
     def __init__(self, master, login):
         self.login = login
-        self.path_customers = "customers\\"
-        self.path_bank = 'bank_account\\bank'
         tk.Toplevel.__init__(self, master)
         self.geometry('350x300')
         tk.Label(self, text="Pick how many tries you want").pack()
@@ -241,74 +230,78 @@ class lotto_los(tk.Toplevel):
         
         
     def one(self):
-        with open(self.path_customers+self.login, 'r') as file:
-            lines = file.readlines()
-        if float(lines[3]) < 100:
-            messagebox.showerror('error', 'No funds')
-        elif float(lines[3]) > 100:
-            with open(self.path_customers+self.login, 'w') as file2:
-                lines[3]=str(float(lines[3])-100.0)+'\n'
-                for x in lines:
-                    file2.write(x)
-            
-                self.t = lotto(self, self.login)
-                self.b = self.t.but
-                self.b.configure(command=self.t.one_try)
-                self.t
-                self.withdraw()
-                bank_acc(self.path_bank, 100)
-        
-
-    def three(self):
-        with open(self.path_customers+self.login, 'r') as file:
-            lines = file.readlines()
-        if float(lines[3]) < 300:
-            messagebox.showerror('error', 'No funds')
-        elif float(lines[3]) > 300:
-            with open(self.path_customers+self.login, 'w') as file2:
-                lines[3]=str(float(lines[3])-300.0)+'\n'
-                for x in lines:
-                    file2.write(x)
-                self.t = lotto(self, self.login)
-                self.b = self.t.but
-                self.b.configure(command=self.t.three_try)
-                self.t
-                self.withdraw()
-                bank_acc(self.path_bank, 300)
-
-    def five(self):
-        with open(self.path_customers+self.login, 'r') as file:
-            lines = file.readlines()
-        if float(lines[3]) < 500:
-            messagebox.showerror('error', 'No funds')
-        elif float(lines[3]) > 500:
-            with open(self.path_customers+self.login, 'w') as file2:
-                lines[3]=str(float(lines[3])-500.0)+'\n'
-                for x in lines:
-                    file2.write(x)
-                self.t = lotto(self, self.login)
-                self.b = self.t.but
-                self.b.configure(command=self.t.five_try)
-                self.t
-                self.withdraw()
-                bank_acc(self.path_bank, 500)
-
-    def ten(self):
-        with open(self.path_customers+self.login, 'r') as file:
-            lines = file.readlines()
-        if float(lines[3]) < 1000:
-            messagebox.showerror('error', 'No funds')
-        elif float(lines[3]) > 1000:
-            with open(self.path_customers+self.login, 'w') as file2:
-                lines[3]=str(float(lines[3])-1000.0)+'\n'
-                for x in lines:
-                    file2.write(x)
+        con = sqlite3.connect('databases\\main.db')
+        cur = con.cursor()
+        cur.execute('SELECT * FROM users WHERE login=?',(self.login,))
+        for row in cur.fetchall():
+            if row[4] < 100:
+                messagebox.showerror('error', 'No funds')
+            elif row[4] > 100:
+                cur.execute('UPDATE users SET cash=cash-? WHERE login=?',(100,self.login))
+                con.commit()
+                con.close()
                 self.t = lotto(self, self.login)
                 self.b = self.t.but
                 self.b.configure(command=self.t.ten_try)
                 self.t
                 self.withdraw()
-                bank_acc(self.path_bank, 1000)
+                    
+        
+
+    def three(self):
+        con = sqlite3.connect('databases\\main.db')
+        cur = con.cursor()
+        cur.execute('SELECT * FROM users WHERE login=?',(self.login,))
+        for row in cur.fetchall():
+            if row[4] < 300:
+                messagebox.showerror('error', 'No funds')
+            elif row[4] > 300:
+                cur.execute('UPDATE users SET cash=cash-? WHERE login=?',(300,self.login))
+                con.commit()
+                con.close()
+                self.t = lotto(self, self.login)
+                self.b = self.t.but
+                self.b.configure(command=self.t.ten_try)
+                self.t
+                self.withdraw()
+                    
+
+    def five(self):
+        con = sqlite3.connect('databases\\main.db')
+        cur = con.cursor()
+        cur.execute('SELECT * FROM users WHERE login=?',(self.login,))
+        for row in cur.fetchall():
+            if row[4] < 500:
+                messagebox.showerror('error', 'No funds')
+            elif row[4] > 500:
+                cur.execute('UPDATE users SET cash=cash-? WHERE login=?',(500,self.login))
+                con.commit()
+                con.close()
+                self.t = lotto(self, self.login)
+                self.b = self.t.but
+                self.b.configure(command=self.t.ten_try)
+                self.t
+                self.withdraw()
+                    
+
+    def ten(self):
+        con = sqlite3.connect('databases\\main.db')
+        cur = con.cursor()
+        cur.execute('SELECT * FROM users WHERE login=?',(self.login,))
+        for row in cur.fetchall():
+            if row[4] < 1000:
+                messagebox.showerror('error', 'No funds')
+            elif row[4] > 1000:
+                cur.execute('UPDATE users SET cash=cash-? WHERE login=?',(1000,self.login))
+                con.commit()
+                con.close()
+                self.t = lotto(self, self.login)
+                self.b = self.t.but
+                self.b.configure(command=self.t.ten_try)
+                self.t
+                self.withdraw()
+                
+                    
         
     
     

@@ -13,6 +13,14 @@ def users():
     con.commit()
     con.close()
 
+def ShowUser():
+    con = sqlite3.connect('databases\\main.db')
+    cur = con.cursor()
+    cur.execute('SELECT * FROM users')
+    ret = cur.fetchall()
+    return ret
+
+
 
 ## REGISTRY PART
 
@@ -54,8 +62,10 @@ def verification(nick, pas, code):
         for row in cur.fetchall():
             if row[10] == 'CUSTOMER':
                 bank(nick,pas,code)
-            else:
+            elif row[10] == 'ADMIN':
                 admins(nick,pas,code)
+            else:
+                messagebox.showerror('error','You have been banned')
     else:
         messagebox.showerror('error', 'Wrong credentials')
         con.commit()

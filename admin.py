@@ -4,140 +4,134 @@ from tkinter import messagebox
 from logs import logs
 from gui import gui
 from money import status
+from collections import OrderedDict
+import sqlite3
+from money import admin_list, ban_unban
 
 
 class admins(tk.Tk):
-    def __init__(self, login, password, code):
-        self.login = login
-        self.logs = logs()
+    def __init__(self,nick,password,code):
+        self.nick = nick
         self.password = password
-        self.code = code
+        self.code = code 
         self.path_logs = "logs\\"
-        status(self.login)
         tk.Tk.__init__(self)
-        tk.Tk.protocol(self,'WM_DELETE_WINDOW', self.offline_switch)
-        tk.Tk.geometry(self,"400x400")
-        tk.Tk.title(self, "Admin menu")
-        tk.Label(self, text='Open user details').pack()
-        self.info = tk.Entry(self, bg="yellow")
-        self.info.pack()
-        tk.Button(self, text='proceed', command=self.get_user).pack()
-        tk.Label(self, text="").pack()
-        tk.Label(self, text="Delete user account").pack()
-        self.info2 = tk.Entry(self, bg="yellow")
-        self.info2.pack()
-        tk.Button(self, text='proceed', command=self.delete).pack()
-        tk.Label(self, text="").pack()
-        tk.Label(self, text="Suspend user account").pack()
-        self.info3 = tk.Entry(self, bg="yellow")
-        self.info3.pack()
-        tk.Button(self, text='proceed', command=self.ban).pack()
-        tk.Label(self, text="").pack()
-        tk.Label(self, text="Unsuspend user account").pack()
-        self.info4 = tk.Entry(self, bg="yellow")
-        self.info4.pack()
-        tk.Button(self, text='proceed', command=self.unban).pack()
-        tk.Label(self, text="").pack()
-        tk.Button(self, text='shop', command=lambda: gui(self,self.login)).pack()
+        tk.Tk.title(self,'managament app')
+        tk.Tk.geometry(self,'970x600+0+0')
+        tk.Tk.configure(self,bg='blue')
+
+    #containers for data
+        self.prodName = tk.StringVar()
+        self.prodOwner = tk.StringVar()
+        self.prodPrice = tk.StringVar()
+        self.prodDescription = tk.StringVar()
+
+    #frames
+        Main = tk.Frame(self, bg='green')
+        Main.grid()
+
+        Header = tk.Frame(Main, bg='green', bd=2, padx=54, pady=8, relief=tk.RIDGE) #////// title space
+        Header.pack(side=tk.TOP)
+
+        self.Header_text = tk.Label(Header, font=('times new roman', 40, 'bold'), text="managament", bg='green')
+        self.Header_text.grid()
+
+        ClickFrame = tk.Frame(Main, bd=2, width=1350, height=70, padx=18, pady=10, bg='blue', relief=tk.RIDGE) #//// buttons space
+        ClickFrame.pack(side=tk.BOTTOM)
+
+        Data = tk.Frame(Main, bd=1, width=1300, height=400, padx=20, pady=20, relief=tk.RIDGE, bg='white') #////// content space
+        Data.pack(side=tk.BOTTOM)
+
+        DataLeft = tk.LabelFrame(Data, bd=1, width=600, height=200, padx=20, relief=tk.RIDGE, bg='yellow', text='User information\n', font=('arial', 20, 'bold'))
+        DataLeft.pack(side=tk.LEFT)
+
+        DataRight = tk.LabelFrame(Data, bd=1, width=450, height=300, padx=31, pady=3, relief=tk.RIDGE, bg='red',  text='User details\n', font=('arial', 20, 'bold'))
+        DataRight.pack(side=tk.RIGHT)
     
+    #///// loop to display 10 entries and sign them up   
+        a = -1
+        self.info = list(range(10))
+        for x in range(10):
+            a = a +1
+            names =['login','password','code','cash','currency','question','answer','token','status','acc_type']  
+            tk.Label(DataLeft, text=names[a]).grid(row=a, column=0)
+            self.info[a] = tk.Entry(DataLeft, bg="yellow")
+            self.info[a].grid(row=a, column=1)
+            
+    #///// scrollbar where data from database is displayed
+
+        Details = tk.Scrollbar(DataRight)
+        Details.grid(row=0, column=1, padx=8)
+        global ProductList
+        ProductList = tk.Listbox(DataRight, width=41, height=16, font=('arial',12,'bold'), yscrollcommand=Details.set)
+        ProductList.bind('<<ListboxSelect>>', self.ChooseUser)
+        ProductList.grid(row=0, column=0, padx=8)
+        Details.configure(command=ProductList.yview)
+
+        tk.Button(ClickFrame, text='refresh', command=self.get_user).grid(row=0, column=1)
+        tk.Button(ClickFrame, text='ban', command=self.ban_unban).grid(row=0, column=2)
+        tk.Button(ClickFrame, text='clear', command=self.list_clear).grid(row=0, column=3)
+        tk.Button(ClickFrame, text='delete', command=self.delete).grid(row=0, column=4)
+
+        tk.Button(ClickFrame, text='shop', command=lambda:gui(self,self.nick)).grid(row=0, column=5)
+    
+    
+#////// functions
+
     def offline_switch(self):
         status(self.login)
         self.destroy()
+
+    def list_clear(self):
+        a = -1
+        for x in range(10):
+            a = a+1
+            self.info[a].delete(0,tk.END)
+
     
     def get_user(self):
-        self.check = self.info.get()
-        list_of_users = os.listdir(self.path_customers)
-
-        if self.check in list_of_users:
-            self.screen = tk.Toplevel(self)
-            self.screen.geometry('450x400')
-            self.text = tk.Text(self.screen)
-            with open(self.path_customers+self.check, 'r') as file:
-                lines = file.readlines()
-                tk.Label(self.screen, text="login:      "+lines[0]).pack()
-                tk.Label(self.screen, text="password:       "+lines[1]).pack()
-                tk.Label(self.screen, text="security code:      "+lines[2]).pack()
-                tk.Label(self.screen, text="Account balance:        "+lines[3]).pack()
-                tk.Label(self.screen, text="Currency account:       "+lines[4]).pack()
-                tk.Label(self.screen, text="Secret question:        "+lines[5]).pack()
-                tk.Label(self.screen, text="Secret answer:      "+lines[6]).pack()
-                tk.Label(self.screen, text="Token status:       "+lines[7]).pack()
-                tk.Label(self.screen, text="online status:      "+lines[8]).pack()
-                if "\n" in lines[8]:
-                  tk.Label(self.screen, text="ACCOUNT SUSPENDED", fg="red").pack()  
-        else:
-            messagebox.showerror('error', 'No user found in database')
+        ProductList.delete(0,tk.END)
+        con = sqlite3.connect('databases\\main.db')
+        cur = con.cursor()
+        cur.execute('SELECT login FROM users')
+        rows = cur.fetchall()
+        for row in rows:
+            ProductList.insert(tk.END,row,str(''))
+        con.commit()
+        con.close()
+            
 
     def delete(self):
-        self.check = self.info2.get()
-        list_of_users = os.listdir(self.path_customers)
-        if self.check in list_of_users:
-            self.choice = messagebox.askquestion('delete', 'Do you want to delete '+self.check+" ?")
-            if self.choice == 'yes':
-                os.remove(self.path_customers+self.check)
-            else:
-                pass
-        else:
-            messagebox.showerror('error', 'No user in database')
+        con = sqlite3.connect('databases\\main.db')
+        cur = con.cursor()
+        messagebox.askyesno('info','Do you want to delete: '+str(particular_id[0]+'?'))
+        if 'yes':
+            cur.execute('DELETE FROM users WHERE login=?',(particular_id[0],))
+            self.get_user()
+        else: 
+            pass
+        con.commit()
+        con.close()
 
-    def ban(self):
-        self.check = self.info3.get()
-        list_of_users = os.listdir(self.path_customers)
-        if self.check in list_of_users:
-            self.choice2 = messagebox.askquestion('ban',"Do you want to suspend "+self.check)
-            if self.choice2 == 'yes':
-                with open(self.path_customers +self.check, 'r') as file:
-                    lines = file.readlines()
-                    if '\n' in lines[8]:
-                        messagebox.showerror('error', 'Account has already been suspended')
-                    else:
-                        with open(self.path_customers +self.check, 'a') as file2:
-                            file2.write('\n'+'BAN')
-                            self.logs.suspend(self.check)
-        else:
-            messagebox.showerror('error', 'No user in database')
-
-    def unban(self):
-        self.check2 = self.info4.get()
-        list_of_users = os.listdir(self.path_customers)
-        if self.check2 in list_of_users:
-            self.choice3 = messagebox.askquestion('ban',"Do you want to suspend "+self.check2)
-            if self.choice3 == 'yes':
-                with open(self.path_customers +self.check2, 'r') as file:
-                    lines = file.readlines()
-                with open(self.path_customers +self.check2, 'w') as file2:
-                    if not '\n' in lines[8]:
-                        messagebox.showerror('error', 'Account is not suspended')
-                    else:
-                        if 'OFFLINE' in lines[8]:
-                            lines[8] = 'OFFLINE'
-                            file2.write(lines[0])
-                            file2.write(lines[1])
-                            file2.write(lines[2])
-                            file2.write(lines[3])
-                            file2.write(lines[4])
-                            file2.write(lines[5])
-                            file2.write(lines[6])
-                            file2.write(lines[7])
-                            file2.write(lines[8])
-                            self.logs.unsuspend(self.check)
-                        else:
-                            lines[8] = 'ONLINE'
-                            file2.write(lines[0])
-                            file2.write(lines[1])
-                            file2.write(lines[2])
-                            file2.write(lines[3])
-                            file2.write(lines[4])
-                            file2.write(lines[5])
-                            file2.write(lines[6])
-                            file2.write(lines[7])
-                            file2.write(lines[8])
-                            self.logs.unsuspend(self.check2)
-        else:
-            messagebox.showerror('error', 'No user in database') 
-
+    def ban_unban(self):
+        ban_unban(self.info[0].get())
                     
-                        
+    def ChooseUser(self,Event=None):
+        b = -1
+        selection = ProductList.curselection()[0]
+        global particular_id
+        particular_id = ProductList.get(selection)
+        for row in admin_list(particular_id[0]): #///// all rows from given login are returned and loop executes each one separately
+            if len(particular_id)==0:
+                self.info[b].delete(0,tk.END)
+            else:
+                for p in range(10): #//// second loop checking the number of row and then assigning it to the specific field
+                    b = b+1
+                    self.info[b].delete(0,tk.END)
+                    self.info[b].insert(tk.END,row[b+1]) #//// +1 because we want to avoid displaying id
+        self.get_user()
+                    
+                                 
                    
 
                

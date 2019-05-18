@@ -3,6 +3,7 @@ from tkinter import messagebox
 import database
 import random
 from collections import OrderedDict
+import sqlite3
 class gui(Toplevel):
     def __init__(self,master, nick):
         self.nick = nick
@@ -116,8 +117,14 @@ class gui(Toplevel):
         
     def Show_product(self):    
         ProductList.delete(0,END)
-        for row in database.ViewProducts():
+        con = sqlite3.connect('databases\\main.db')
+        cur = con.cursor()
+        cur.execute('SELECT id,name FROM products')
+        rows = cur.fetchall()
+        for row in rows:
             ProductList.insert(END,row,str(''))
+        con.commit()
+        con.close()
         
 
     def Del_product(self):
@@ -133,14 +140,14 @@ class gui(Toplevel):
         particular_id = ProductList.get(selection)
         list_of_entries = {self.entry_Owner:2,self.entry_price:3,self.entry_name:1,self.entry_Description:4}
         for x in OrderedDict(sorted(list_of_entries.items(), key=lambda t:t[1])):
-            if len(particular_id)==0:
-                x.delete(0,END)
-            else:
-                for p in range(1):
+            for row in database.product_list(particular_id[0]):
+                if len(particular_id)==0:
+                    x.delete(0,END)
+                else:
                     a = a+1
                     x.delete(0,END)
-                    x.insert(END,particular_id[a])
-                    print(a)
+                    x.insert(END,row[a])
+                        
                                              
     def Edit(self):
         selection = ProductList.curselection()[0]
