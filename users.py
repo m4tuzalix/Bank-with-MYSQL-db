@@ -8,10 +8,23 @@ def users():
     con = sqlite3.connect('databases\\main.db')
     cur = con.cursor()
     cur.execute('CREATE TABLE IF NOT EXISTS users(id INTEGER PRIMARY KEY, login TEXT(15), password TEXT(15), sec_code TEXT(4), cash FLOAT, currency TEXT, question TEXT, answer TEXT, token TEXT, status TEXT, acc_type TEXT(8))')
-    cur.execute("CREATE TABLE IF NOT EXISTS products(id INTEGER PRIMARY KEY, name TEXT, owner TEXT,  price INTEGER, description TEXT)")
+    cur.execute("CREATE TABLE IF NOT EXISTS products(id INTEGER PRIMARY KEY, name TEXT(20), owner TEXT(15),  price INTEGER, description TEXT(30))")
     cur.execute('CREATE TABLE IF NOT EXISTS orders(id INTEGER PRIMARY KEY, UserId INTEGER, ProductId INTEGER, Date TEXT, FOREIGN KEY (UserId) REFERENCES users(id), FOREIGN KEY (ProductId) REFERENCES products(id))')
+    cur.execute('SELECT * FROM users WHERE login=?',("admin",))
+    if cur.fetchall():
+        pass
+    else:
+        cur.execute('INSERT INTO users VALUES (NULL,?,?,?,?,?,?,?,?,?,?)',("admin","admin",11,0,0,"admin","admin","No token","OFFLINE","ADMIN"))
     con.commit()
     con.close()
+
+def ShowUser():
+    con = sqlite3.connect('databases\\main.db')
+    cur = con.cursor()
+    cur.execute('SELECT * FROM users')
+    ret = cur.fetchall()
+    return ret
+
 
 
 ## REGISTRY PART
@@ -54,8 +67,10 @@ def verification(nick, pas, code):
         for row in cur.fetchall():
             if row[10] == 'CUSTOMER':
                 bank(nick,pas,code)
-            else:
+            elif row[10] == 'ADMIN':
                 admins(nick,pas,code)
+            else:
+                messagebox.showerror('error','You have been banned')
     else:
         messagebox.showerror('error', 'Wrong credentials')
         con.commit()

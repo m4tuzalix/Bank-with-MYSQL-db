@@ -41,4 +41,13 @@ def SearchProducts(name,test):
     conn.commit()
     conn.close
     return row
+
+def product_list(id):
+    conn = sqlite3.connect('databases\\main.db')
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM products WHERE id=?",(id,))
+    row = cur.fetchall()
+    conn.commit()
+    conn.close
+    return row
     

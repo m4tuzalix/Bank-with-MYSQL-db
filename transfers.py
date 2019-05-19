@@ -37,6 +37,6 @@ class trans(tk.Toplevel):
             messagebox.showerror('error','Empty field')
         else:
             send_cash(self.amount_load,self.nick, self.login_load) #/// calls function in database
-            messagebox.showinfo('info','You have sent: '+str(self.amount_load+' to: '+str(self.login_load)))
+            
             
 

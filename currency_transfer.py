@@ -9,9 +9,6 @@ class currency_trans(tk.Toplevel):
         self.name=name
         self.path_customers = "customers\\"
         tk.Toplevel.__init__(self, master)
-        global file
-        with open(self.path_customers+self.name, 'r') as file:
-            lines=file.readlines()
         self.title("Add funds to currency")
         self.geometry("350x250")
         con = sqlite3.connect('databases\\main.db')

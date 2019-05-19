@@ -5,6 +5,7 @@ from tkinter import messagebox
 from tkinter import font as tkfont
 from banking import bank
 import time
+import sqlite3
 
 
 
@@ -17,7 +18,6 @@ class back(tk.Toplevel):
         self.info = tk.StringVar()
         self.info2 = tk.StringVar()
         self.info3 = tk.StringVar()
-        self.path_customers = 'customers\\'
         self.path_logs = "logs\\"
         self.geometry("350x200")
         self.title("smiglo")
@@ -46,19 +46,21 @@ class back(tk.Toplevel):
         self.final = tk.StringVar()
         self.answer = tk.StringVar()
         self.get = self.info.get() 
-        login_list = os.listdir(self.path_customers)
-        if self.get in login_list:
-            with open(self.path_customers+self.get, "r") as file:
-                lines = file.readlines()
-                self.geometry("500x400")
-                self.info2.set("Answer to your secret question:")
-                self.info3.set(lines[5])
-                self.entry = tk.Entry(self)
-                self.entry.pack()
-                self.button = tk.Button(self, text="Check", command=self.valid)
-                self.button.pack()
-                tk.Label(self, textvariable=self.final).pack()
-        elif self.get not in login_list:
+        self.entry = tk.Entry(self)
+        self.button = tk.Button(self, text="Check", command=self.valid)
+        con = sqlite3.connect('databases\\main.db')
+        cur = con.cursor()
+        cur.execute('SELECT * FROM users WHERE login=?',(self.get,))
+        if cur.fetchone():
+            self.geometry("500x400")
+            self.info2.set("Answer to your secret question:")
+            cur.execute('SELECT * FROM users WHERE login=?',(self.get,))
+            for row in cur.fetchall():
+                self.info3.set(row[6])
+            self.entry.pack()
+            self.button.pack()
+            tk.Label(self, textvariable=self.final).pack()
+        else:
             messagebox.showerror('error', 'user cannot be identified')
             self.geometry("350x200")
             self.info3.set("")
@@ -69,10 +71,14 @@ class back(tk.Toplevel):
     def valid(self):
         self.counter = self.counter
         self.check = self.entry.get()
-        if lines[6] == self.check+"\n":
-            self.but.configure(state=tk.ACTIVE)
-            messagebox.showinfo("succes","Your password: "+str(lines[1]))
-            self.destroy()
+        con = sqlite3.connect('databases\\main.db')
+        cur = con.cursor()
+        cur.execute('SELECT * FROM users WHERE login=?',(self.get,))
+        for row in cur.fetchall():
+            if row[7] == self.check:
+                self.but.configure(state=tk.ACTIVE)
+                messagebox.showinfo("succes","Your password: "+str(row[2]))
+                self.destroy()
         else:
             self.counter = self.counter - 1
             self.lol = messagebox.showwarning("warning", "wrong password!! more attempts: "+str(self.counter))

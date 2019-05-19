@@ -76,7 +76,7 @@ class currency(tk.Toplevel):
             messagebox.showerror('error','cannot deposit negative amount')
         else:
             usd_deposit(self.usd,self.nick)
-            messagebox.showinfo('info',"you have deposited: "+str(self.balance)+"$")
+            messagebox.showinfo('info',"you have deposited: "+str(self.usd)+"$")
             self.log.depo_usd_logs(self.nick, self.usd)
 
     def withdraw_usd(self):
@@ -88,7 +88,7 @@ class currency(tk.Toplevel):
             messagebox.showerror('error','cannot withdraw negative amount')
         else:
             withdraw_usd(self.usd, self.nick)
-            messagebox.showinfo('info',"you have withdrawed: "+str(self.balance)+"$")
+            messagebox.showinfo('info',"you have withdrawed: "+str(self.usd)+"$")
             self.log.with_usd_logs(self.nick, self.usd)
 
 

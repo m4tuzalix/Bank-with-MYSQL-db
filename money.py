@@ -53,8 +53,18 @@ def send_cash(amount,login, customer):
     if funds_check.fetchone():
         messagebox.showerror('error', 'No funds to make transfer')
     else:
-        cur.execute("UPDATE users SET cash=cash-? WHERE login=?", (amount,login,)) #/// Takes money from sender
-        cur.execute("UPDATE users SET cash=cash+? WHERE login=?", (amount,customer,)) #//// Transfers the money taken from sender to the customer
+        cur.execute('SELECT * FROM users WHERE login=?',(customer,))
+        if cur.fetchone():
+            cur.execute('SELECT * FROM users WHERE login=?',(customer,))
+            for row in cur.fetchall():
+                if row[5] != 'Not opened':
+                    cur.execute("UPDATE users SET cash=cash-? WHERE login=?", (amount,login,)) #/// Takes money from sender
+                    cur.execute("UPDATE users SET cash=cash+? WHERE login=?", (amount,customer,)) #//// Transfers the money taken from sender to the customer
+                    messagebox.showinfo('info','You have sent: '+str(amount)+' to: '+customer)
+                else:
+                    messagebox.showinfo('info','User has not opened currency account')
+        else:
+            messagebox.showerror('error','This user does not exist')
         con.commit()
         con.close()
 
@@ -227,3 +237,40 @@ def tenn(login,bet):
                 messagebox.showinfo('loose', "you lost")
     con.commit()
     con.close()
+
+#///// admin stuff
+
+def admin_list(login):  #// gets user list
+    con = sqlite3.connect('databases\\main.db')
+    cur = con.cursor()
+    cur.execute('SELECT * FROM users where login=?',(login,))
+    rows = cur.fetchall()
+    con.commit()
+    con.close()
+    return rows
+
+def ban_unban(login):
+    con = sqlite3.connect('databases\\main.db')
+    cur = con.cursor()
+    cur.execute('SELECT * FROM users WHERE login=?',(login,))
+    for row in cur.fetchall():
+        if row[10] == 'BANNED':
+            cur.execute('UPDATE users SET acc_type=? WHERE login=?',('CUSTOMER',login,))
+            messagebox.showinfo('info','Banned user login: '+str(login))
+        elif row[10]=='CUSTOMER':
+            cur.execute('UPDATE users SET acc_type=? WHERE login=?',('BANNED',login,))
+            messagebox.showinfo('info','Unbaned login: '+str(login))
+    con.commit()
+    con.close()
+
+
+#//// products
+
+def product_list(name):  #// gets user list
+    con = sqlite3.connect('databases\\main.db')
+    cur = con.cursor()
+    cur.execute('SELECT * FROM products where name=?',(name,))
+    rows = cur.fetchall()
+    con.commit()
+    con.close()
+    return rows
