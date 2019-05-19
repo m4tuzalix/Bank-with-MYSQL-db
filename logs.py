@@ -85,15 +85,7 @@ class logs():
                 file = open(self.path_logs+self.name+"_logs", "a")
                 file.write("<"+self.t+">"+" "+"Logged out"+"\n")
 
-    def suspend(self, name):
-        self.name = name
-        file = open(self.path_logs+self.name+"_logs", "a")
-        file.write("<"+self.t+">"+" "+"Account suspended"+"\n")
-
-    def unsuspend(self, name):
-        self.name = name
-        file = open(self.path_logs+self.name+"_logs", "a")
-        file.write("<"+self.t+">"+" "+"Account unsuspended"+"\n")
+    
 
         
 

@@ -256,10 +256,10 @@ def ban_unban(login):
     for row in cur.fetchall():
         if row[10] == 'BANNED':
             cur.execute('UPDATE users SET acc_type=? WHERE login=?',('CUSTOMER',login,))
-            messagebox.showinfo('info','Banned user login: '+str(login))
+            messagebox.showinfo('info','Unbanned user login: '+str(login))
         elif row[10]=='CUSTOMER':
             cur.execute('UPDATE users SET acc_type=? WHERE login=?',('BANNED',login,))
-            messagebox.showinfo('info','Unbaned login: '+str(login))
+            messagebox.showinfo('info','Banned login: '+str(login))
     con.commit()
     con.close()
 

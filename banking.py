@@ -28,11 +28,10 @@ class bank(tk.Tk):
         self.password = password
         self.code = code
         self.log = logs()
-        self.path_customers = "customers\\"
         self.path_logs = "logs\\"
 
 
-
+        self.log.log_on(self.name)
         tk.Tk.__init__(self)
         status(self.name) #///// sets user's status to ONLINE
         
