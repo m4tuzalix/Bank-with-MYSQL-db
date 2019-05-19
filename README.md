@@ -7,6 +7,4 @@ Gui where admin can add products and user can buy them. Shop gui is related with
 
 credentials for admin account:
 
-login: admin
-password: admin
-security code: 11
+login: admin | password: admin | security code: 11
