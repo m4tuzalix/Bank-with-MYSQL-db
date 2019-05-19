@@ -20,11 +20,6 @@ class admins(tk.Tk):
         tk.Tk.geometry(self,'760x575+0+0')
         tk.Tk.configure(self,bg='blue')
 
-    #containers for data
-        self.prodName = tk.StringVar()
-        self.prodOwner = tk.StringVar()
-        self.prodPrice = tk.StringVar()
-        self.prodDescription = tk.StringVar()
 
     #frames
         Main = tk.Frame(self, bg='green')
