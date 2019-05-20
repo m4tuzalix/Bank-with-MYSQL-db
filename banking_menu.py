@@ -120,8 +120,9 @@ class menu(tk.Tk):
         self.username_entry.pack()
 
         tk.Label(self.screen1, text ="Password *").pack()
-        self.password_entry = tk.Entry(self.screen1, textvariable=self.password)
+        self.password_entry = tk.Entry(self.screen1, show='*', textvariable=self.password)
         self.password_entry.pack()
+        
 
         self.option_menu = tk.OptionMenu(self.screen1, self.choice, *questions)
         self.option_menu.pack()
@@ -175,7 +176,7 @@ class menu(tk.Tk):
         self.username_entry2.pack()
 
         tk.Label(self.screen2, text ="Password *").pack()
-        self.password_entry2 = tk.Entry(self.screen2, textvariable=self.password2)
+        self.password_entry2 = tk.Entry(self.screen2, show='*', textvariable=self.password2)
         self.password_entry2.pack()
 
         tk.Label(self.screen2, text ="Security Code *").pack()
