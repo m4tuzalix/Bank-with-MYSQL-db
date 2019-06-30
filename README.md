@@ -1,4 +1,4 @@
-# Bank-with-MYSQL-db
+# Bank-with-SQL-db
 
 Refreshed version of first bank project based on txt database. This code has been improved and optymalised and based on sqlite3 db. 
 
